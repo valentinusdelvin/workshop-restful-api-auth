@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"workshop-restful-api-backend/internal/entity"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -18,5 +19,14 @@ func StartPostgres() *gorm.DB {
 		log.Fatalf("Can not connect to database:%s", err.Error())
 	}
 
+	migrate(db)
+
 	return db
+}
+
+func migrate(db *gorm.DB) {
+	err := db.AutoMigrate(&entity.Restaurant{})
+	if err != nil {
+		log.Fatalf("Failed to run migrations: %s", err.Error())
+	}
 }
