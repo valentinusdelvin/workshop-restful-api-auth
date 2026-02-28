@@ -7,27 +7,34 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (c *Controller) GetRestaurant(ctx *gin.Context) {
-	restaurants, err := c.usecase.RestaurantUsecase.GetRestaurants()
+func (r *Controller) GetRestaurant(c *gin.Context) {
+	ctx := c.Request.Context()
+
+	restaurants, err := r.usecase.RestaurantUsecase.GetRestaurants(ctx)
 	if err != nil {
-		ctx.AbortWithStatus(http.StatusInternalServerError)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
 	}
 
-	ctx.JSON(http.StatusOK, restaurants)
+	c.JSON(http.StatusOK, restaurants)
 }
 
-func (c *Controller) CreateRestaurant(ctx *gin.Context) {
+func (r *Controller) CreateRestaurant(c *gin.Context) {
 	var createRestaurant model.CreateRestaurant
 
-	err := ctx.ShouldBindBodyWithJSON(&createRestaurant)
+	err := c.ShouldBindBodyWithJSON(&createRestaurant)
 	if err != nil {
-		ctx.AbortWithStatus(http.StatusBadRequest)
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
 	}
 
-	restaurant, err := c.usecase.RestaurantUsecase.CreateRestaurant(createRestaurant)
+	ctx := c.Request.Context()
+
+	restaurant, err := r.usecase.RestaurantUsecase.CreateRestaurant(ctx, createRestaurant)
 	if err != nil {
-		ctx.AbortWithStatus(http.StatusInternalServerError)
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
 	}
 
-	ctx.JSON(http.StatusCreated, restaurant)
+	c.JSON(http.StatusCreated, restaurant)
 }

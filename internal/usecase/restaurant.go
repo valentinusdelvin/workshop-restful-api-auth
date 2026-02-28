@@ -1,6 +1,7 @@
 package usecase
 
 import (
+	"context"
 	"time"
 	"workshop-restful-api-backend/internal/entity"
 	"workshop-restful-api-backend/internal/model"
@@ -10,8 +11,8 @@ import (
 )
 
 type IRestaurantUsecase interface {
-	CreateRestaurant(createRestaurant model.CreateRestaurant) (*model.RestaurantResponse, error)
-	GetRestaurants() ([]entity.Restaurant, error)
+	CreateRestaurant(ctx context.Context, createRestaurant model.CreateRestaurant) (*model.RestaurantResponse, error)
+	GetRestaurants(ctx context.Context) ([]entity.Restaurant, error)
 }
 
 type RestaurantUsecase struct {
@@ -22,7 +23,7 @@ func NewRestaurantUsecase(restaurantRepository repository.IRestaurantRepository)
 	return &RestaurantUsecase{restaurantRepository}
 }
 
-func (r *RestaurantUsecase) CreateRestaurant(createRestaurant model.CreateRestaurant) (*model.RestaurantResponse, error) {
+func (r *RestaurantUsecase) CreateRestaurant(ctx context.Context, createRestaurant model.CreateRestaurant) (*model.RestaurantResponse, error) {
 	restaurant := entity.Restaurant{
 		Id:        uuid.New(),
 		Name:      createRestaurant.Name,
@@ -30,7 +31,7 @@ func (r *RestaurantUsecase) CreateRestaurant(createRestaurant model.CreateRestau
 		CreatedAt: time.Now(),
 	}
 
-	err := r.restaurantRepository.CreateRestaurant(restaurant)
+	err := r.restaurantRepository.CreateRestaurant(ctx, restaurant)
 	if err != nil {
 		return nil, err
 	}
@@ -40,6 +41,6 @@ func (r *RestaurantUsecase) CreateRestaurant(createRestaurant model.CreateRestau
 	return &response, nil
 }
 
-func (r *RestaurantUsecase) GetRestaurants() ([]entity.Restaurant, error) {
-	return r.restaurantRepository.GetRestaurants()
+func (r *RestaurantUsecase) GetRestaurants(ctx context.Context) ([]entity.Restaurant, error) {
+	return r.restaurantRepository.GetRestaurants(ctx)
 }
