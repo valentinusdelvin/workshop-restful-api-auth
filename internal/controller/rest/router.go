@@ -9,7 +9,7 @@ func NewRouter(app *gin.Engine, v1 *V1) {
 	{
 		restaurants := api.Group("/restaurants")
 		{
-			restaurants.GET("/", v1.GetRestaurant)
+			restaurants.GET("/", v1.GetRestaurants)
 			restaurants.POST("/", v1.CreateRestaurant)
 			restaurants.DELETE("/:id", v1.DeleteRestaurant)
 			restaurants.PATCH("/:id", v1.EditRestaurant)

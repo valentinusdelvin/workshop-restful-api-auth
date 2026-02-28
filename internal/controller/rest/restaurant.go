@@ -10,7 +10,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func (r *V1) GetRestaurant(c *gin.Context) {
+func (r *V1) GetRestaurants(c *gin.Context) {
 	ctx := c.Request.Context()
 
 	restaurants, err := r.usecase.RestaurantUsecase.GetRestaurants(ctx)
@@ -51,7 +51,7 @@ func (r *V1) DeleteRestaurant(c *gin.Context) {
 
 	ctx := c.Request.Context()
 
-	err = r.usecase.RestaurantUsecase.DeleteRestaurants(ctx, id)
+	err = r.usecase.RestaurantUsecase.DeleteRestaurant(ctx, id)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			c.AbortWithStatus(http.StatusNotFound)

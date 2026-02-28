@@ -6,7 +6,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-func NewCofig() {
+func NewConfig() {
 	err := godotenv.Load()
 
 	if err != nil {

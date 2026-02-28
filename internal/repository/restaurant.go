@@ -12,7 +12,7 @@ import (
 type IRestaurantRepository interface {
 	CreateRestaurant(ctx context.Context, trestaurant entity.Restaurant) error
 	GetRestaurants(ctx context.Context) ([]entity.Restaurant, error)
-	DeleteRestaurants(ctx context.Context, id uuid.UUID) error
+	DeleteRestaurant(ctx context.Context, id uuid.UUID) error
 	EditRestaurant(ctx context.Context, id uuid.UUID, edit model.EditRestaurant) error
 }
 
@@ -42,7 +42,7 @@ func (r *RestaurantRepository) GetRestaurants(ctx context.Context) ([]entity.Res
 	return restaurants, nil
 }
 
-func (r *RestaurantRepository) DeleteRestaurants(ctx context.Context, id uuid.UUID) error {
+func (r *RestaurantRepository) DeleteRestaurant(ctx context.Context, id uuid.UUID) error {
 	rows, err := gorm.G[entity.Restaurant](r.db).Where("id = ?", id).Delete(ctx)
 	if err != nil {
 		return err
