@@ -22,7 +22,7 @@ type RestaurantResponse struct {
 	Location string    `json:"location"`
 }
 
-func ToRestourantResponse(restaurant entity.Restaurant) RestaurantResponse {
+func ToRestaurantResponse(restaurant entity.Restaurant) RestaurantResponse {
 	return RestaurantResponse{
 		Id:       restaurant.Id,
 		Name:     restaurant.Name,
@@ -33,7 +33,7 @@ func ToRestourantResponse(restaurant entity.Restaurant) RestaurantResponse {
 func ToRestaurantResponses(restaurants []entity.Restaurant) []RestaurantResponse {
 	var responses []RestaurantResponse
 	for _, restaurant := range restaurants {
-		responses = append(responses, ToRestourantResponse(restaurant))
+		responses = append(responses, ToRestaurantResponse(restaurant))
 	}
 
 	return responses

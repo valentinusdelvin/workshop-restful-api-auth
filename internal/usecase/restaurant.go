@@ -38,7 +38,7 @@ func (r *RestaurantUsecase) CreateRestaurant(ctx context.Context, createRestaura
 		return nil, err
 	}
 
-	response := model.ToRestourantResponse(restaurant)
+	response := model.ToRestaurantResponse(restaurant)
 	return &response, nil
 }
 
