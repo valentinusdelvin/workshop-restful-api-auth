@@ -41,9 +41,13 @@ func (r *RestaurantRepository) GetRestaurants(ctx context.Context) ([]entity.Res
 }
 
 func (r *RestaurantRepository) DeleteRestaurants(ctx context.Context, id uuid.UUID) error {
-	_, err := gorm.G[entity.Restaurant](r.db).Where("id = ?", id).Delete(ctx)
+	rows, err := gorm.G[entity.Restaurant](r.db).Where("id = ?", id).Delete(ctx)
 	if err != nil {
 		return err
+	}
+
+	if rows == 0 {
+		return gorm.ErrRecordNotFound
 	}
 
 	return nil

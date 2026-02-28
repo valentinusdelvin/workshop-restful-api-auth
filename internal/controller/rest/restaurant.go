@@ -1,11 +1,13 @@
 package rest
 
 import (
+	"errors"
 	"net/http"
 	"workshop-restful-api-backend/internal/model"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 func (r *V1) GetRestaurant(c *gin.Context) {
@@ -51,6 +53,10 @@ func (r *V1) DeleteRestaurant(c *gin.Context) {
 
 	err = r.usecase.RestaurantUsecase.DeleteRestaurants(ctx, id)
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.AbortWithStatus(http.StatusNotFound)
+			return
+		}
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
