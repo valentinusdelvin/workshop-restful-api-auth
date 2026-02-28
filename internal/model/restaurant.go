@@ -16,6 +16,19 @@ type EditRestaurant struct {
 	Location string `json:"location"`
 }
 
+func (e *EditRestaurant) ToMap() map[string]any {
+	updates := map[string]any{}
+
+	if e.Name != "" {
+		updates["name"] = e.Name
+	}
+	if e.Location != "" {
+		updates["location"] = e.Location
+	}
+
+	return updates
+}
+
 type RestaurantResponse struct {
 	Id       uuid.UUID `json:"id"`
 	Name     string    `json:"name"`

@@ -56,15 +56,15 @@ func (r *RestaurantRepository) DeleteRestaurant(ctx context.Context, id uuid.UUI
 }
 
 func (r *RestaurantRepository) EditRestaurant(ctx context.Context, id uuid.UUID, edit model.EditRestaurant) error {
-	rows, err := gorm.G[entity.Restaurant](r.db).
+	result := r.db.WithContext(ctx).Model(&entity.Restaurant{}).
 		Where("id = ?", id).
-		Updates(ctx, entity.Restaurant{Name: edit.Name, Location: edit.Location})
+		Updates(edit.ToMap())
 
-	if err != nil {
-		return err
+	if result.Error != nil {
+		return result.Error
 	}
 
-	if rows == 0 {
+	if result.RowsAffected == 0 {
 		return gorm.ErrRecordNotFound
 	}
 
