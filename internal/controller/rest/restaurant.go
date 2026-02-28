@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (r *Controller) GetRestaurant(c *gin.Context) {
+func (r *V1) GetRestaurant(c *gin.Context) {
 	ctx := c.Request.Context()
 
 	restaurants, err := r.usecase.RestaurantUsecase.GetRestaurants(ctx)
@@ -19,7 +19,7 @@ func (r *Controller) GetRestaurant(c *gin.Context) {
 	c.JSON(http.StatusOK, restaurants)
 }
 
-func (r *Controller) CreateRestaurant(c *gin.Context) {
+func (r *V1) CreateRestaurant(c *gin.Context) {
 	var createRestaurant model.CreateRestaurant
 
 	err := c.ShouldBindBodyWithJSON(&createRestaurant)
