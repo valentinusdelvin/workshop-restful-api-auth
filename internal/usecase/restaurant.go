@@ -1,12 +1,16 @@
 package usecase
 
 import (
+	"time"
 	"workshop-restful-api-backend/internal/entity"
+	"workshop-restful-api-backend/internal/model"
 	"workshop-restful-api-backend/internal/repository"
+
+	"github.com/google/uuid"
 )
 
 type IRestaurantUsecase interface {
-	CreateRestaurant(restaurant entity.Restaurant) error
+	CreateRestaurant(createRestaurant model.CreateRestaurant) (*model.RestaurantResponse, error)
 	GetRestaurants() ([]entity.Restaurant, error)
 }
 
@@ -18,8 +22,22 @@ func NewRestaurantUsecase(restaurantRepository repository.IRestaurantRepository)
 	return &RestaurantUsecase{restaurantRepository}
 }
 
-func (r *RestaurantUsecase) CreateRestaurant(restaurant entity.Restaurant) error {
-	return r.restaurantRepository.CreateRestaurant(restaurant)
+func (r *RestaurantUsecase) CreateRestaurant(createRestaurant model.CreateRestaurant) (*model.RestaurantResponse, error) {
+	restaurant := entity.Restaurant{
+		Id:        uuid.New(),
+		Name:      createRestaurant.Name,
+		Location:  createRestaurant.Location,
+		CreatedAt: time.Now(),
+	}
+
+	err := r.restaurantRepository.CreateRestaurant(restaurant)
+	if err != nil {
+		return nil, err
+	}
+
+	response := model.ToRestourantResponse(restaurant)
+
+	return &response, nil
 }
 
 func (r *RestaurantUsecase) GetRestaurants() ([]entity.Restaurant, error) {
