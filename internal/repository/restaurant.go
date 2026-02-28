@@ -10,7 +10,7 @@ import (
 )
 
 type IRestaurantRepository interface {
-	CreateRestaurant(ctx context.Context, trestaurant entity.Restaurant) error
+	CreateRestaurant(ctx context.Context, restaurant entity.Restaurant) error
 	GetRestaurants(ctx context.Context) ([]entity.Restaurant, error)
 	DeleteRestaurant(ctx context.Context, id uuid.UUID) error
 	EditRestaurant(ctx context.Context, id uuid.UUID, edit model.EditRestaurant) error
