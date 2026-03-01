@@ -10,6 +10,6 @@ type Usecase struct {
 func NewUsecase(repository *repository.Repository) *Usecase {
 	return &Usecase{
 		RestaurantUsecase: NewRestaurantUsecase(repository.RestaurantRepository),
-		ItemUsecase:       NewItemUsecase(repository.ItemRepository, repository.RestaurantRepository),
+		ItemUsecase:       NewItemUsecase(repository.ItemRepository),
 	}
 }

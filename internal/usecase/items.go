@@ -17,14 +17,12 @@ type IItemUsecase interface {
 }
 
 type ItemUsecase struct {
-	itemRepository       repository.IItemRepository
-	restaurantRepository repository.IRestaurantRepository
+	itemRepository repository.IItemRepository
 }
 
-func NewItemUsecase(itemRepository repository.IItemRepository, restaurantRepository repository.IRestaurantRepository) *ItemUsecase {
+func NewItemUsecase(itemRepository repository.IItemRepository) *ItemUsecase {
 	return &ItemUsecase{
-		itemRepository:       itemRepository,
-		restaurantRepository: restaurantRepository,
+		itemRepository: itemRepository,
 	}
 }
 
