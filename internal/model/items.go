@@ -39,3 +39,25 @@ type CreateItem struct {
 	Price        float64   `json:"price"`
 	Available    bool      `json:"available"`
 }
+
+type EditItem struct {
+	Name      string  `json:"name"`
+	Price     float64 `json:"price"`
+	Available *bool   `json:"available"`
+}
+
+func (e *EditItem) ToMap() map[string]any {
+	updates := map[string]any{}
+
+	if e.Name != "" {
+		updates["name"] = e.Name
+	}
+	if e.Price != 0 {
+		updates["location"] = e.Price
+	}
+	if e.Available != nil {
+		updates["available"] = e.Available
+	}
+
+	return updates
+}

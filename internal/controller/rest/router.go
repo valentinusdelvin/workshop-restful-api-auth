@@ -20,6 +20,7 @@ func NewRouter(app *gin.Engine, v1 *V1) {
 			items.GET("/:id", v1.GetRestaurantItems)
 			items.POST("/", v1.CreateItem)
 			items.DELETE("/:id", v1.DeleteItem)
+			items.PATCH("/:id", v1.EditItem)
 		}
 	}
 }

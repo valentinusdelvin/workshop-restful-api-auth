@@ -65,3 +65,31 @@ func (r *V1) DeleteItem(c *gin.Context) {
 
 	c.JSON(http.StatusOK, nil)
 }
+
+func (r *V1) EditItem(c *gin.Context) {
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	var edit model.EditItem
+	err = c.ShouldBindBodyWithJSON(&edit)
+	if err != nil {
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	ctx := c.Request.Context()
+	err = r.usecase.ItemUsecase.EditItem(ctx, id, edit)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.AbortWithStatus(http.StatusNotFound)
+			return
+		}
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	c.JSON(http.StatusOK, nil)
+}

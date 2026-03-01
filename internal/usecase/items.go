@@ -13,6 +13,7 @@ type IItemUsecase interface {
 	GetRestaurantItems(ctx context.Context, restaurantId uuid.UUID) ([]model.ItemResponse, error)
 	CreateItem(ctx context.Context, creteItem model.CreateItem) (*model.ItemResponse, error)
 	DeleteItem(ctx context.Context, id uuid.UUID) error
+	EditItem(ctx context.Context, id uuid.UUID, edit model.EditItem) error
 }
 
 type ItemUsecase struct {
@@ -57,4 +58,8 @@ func (u *ItemUsecase) CreateItem(ctx context.Context, creteItem model.CreateItem
 
 func (u *ItemUsecase) DeleteItem(ctx context.Context, id uuid.UUID) error {
 	return u.itemRepository.DeleteItem(ctx, id)
+}
+
+func (u *ItemUsecase) EditItem(ctx context.Context, id uuid.UUID, edit model.EditItem) error {
+	return u.itemRepository.EditItem(ctx, id, edit)
 }
