@@ -53,10 +53,10 @@ func (e *EditItem) ToMap() map[string]any {
 		updates["name"] = e.Name
 	}
 	if e.Price != 0 {
-		updates["location"] = e.Price
+		updates["price"] = e.Price
 	}
 	if e.Available != nil {
-		updates["available"] = e.Available
+		updates["available"] = *e.Available
 	}
 
 	return updates
