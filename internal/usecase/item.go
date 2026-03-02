@@ -11,7 +11,7 @@ import (
 
 type IItemUsecase interface {
 	GetRestaurantItems(ctx context.Context, restaurantId uuid.UUID) ([]model.ItemResponse, error)
-	CreateItem(ctx context.Context, createItem model.CreateItem) (*model.ItemResponse, error)
+	CreateItem(ctx context.Context, restaurantId uuid.UUID, createItem model.CreateItem) (*model.ItemResponse, error)
 	DeleteItem(ctx context.Context, id uuid.UUID) error
 	EditItem(ctx context.Context, id uuid.UUID, edit model.EditItem) error
 }
@@ -36,10 +36,10 @@ func (u *ItemUsecase) GetRestaurantItems(ctx context.Context, restaurantId uuid.
 	return responses, nil
 }
 
-func (u *ItemUsecase) CreateItem(ctx context.Context, createItem model.CreateItem) (*model.ItemResponse, error) {
+func (u *ItemUsecase) CreateItem(ctx context.Context, restaurantId uuid.UUID, createItem model.CreateItem) (*model.ItemResponse, error) {
 	item := entity.Item{
 		Id:           uuid.New(),
-		RestaurantId: createItem.RestaurantId,
+		RestaurantId: restaurantId,
 		Name:         createItem.Name,
 		Price:        createItem.Price,
 		Available:    createItem.Available,

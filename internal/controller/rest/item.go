@@ -28,15 +28,21 @@ func (r *V1) GetRestaurantItems(c *gin.Context) {
 }
 
 func (r *V1) CreateItem(c *gin.Context) {
+	id, err := uuid.Parse(c.Param("id"))
+	if err != nil {
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
 	var create model.CreateItem
-	err := c.ShouldBindBodyWithJSON(&create)
+	err = c.ShouldBindBodyWithJSON(&create)
 	if err != nil {
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
 
 	ctx := c.Request.Context()
-	item, err := r.usecase.ItemUsecase.CreateItem(ctx, create)
+	item, err := r.usecase.ItemUsecase.CreateItem(ctx, id, create)
 	if err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
