@@ -43,7 +43,12 @@ func (r *V1) GetRestaurantItems(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, items)
+	response := model.PaginatedResponse[model.ItemResponse]{
+		Data:       items,
+		Pagination: pagination,
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 func (r *V1) CreateItem(c *gin.Context) {
