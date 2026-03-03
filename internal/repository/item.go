@@ -25,10 +25,13 @@ func NewItemRepository(db *gorm.DB) *ItemRepository {
 }
 
 func (r *ItemRepository) GetRestaurantItems(ctx context.Context, pagination model.Pagination, restaurantID uuid.UUID) ([]entity.Item, error) {
-	Item, err := gorm.G[entity.Item](r.db).Limit(pagination.Limit).
+	Item, err := gorm.G[entity.Item](r.db).
+		Limit(pagination.Limit).
 		Offset(pagination.Offset()).
+		Order("created_at DESC").
 		Where("restaurant_id = ?", restaurantID).
 		Find(ctx)
+
 	if err != nil {
 		return nil, err
 	}
