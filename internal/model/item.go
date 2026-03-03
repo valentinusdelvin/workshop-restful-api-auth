@@ -34,10 +34,9 @@ func ToItemResponses(items []entity.Item) []ItemResponse {
 }
 
 type CreateItem struct {
-	Name         string    `json:"name"`
-	RestaurantId uuid.UUID `json:"restaurant_id"`
-	Price        float64   `json:"price"`
-	Available    bool      `json:"available"`
+	Name      string  `json:"name"`
+	Price     float64 `json:"price"`
+	Available bool    `json:"available"`
 }
 
 type EditItem struct {

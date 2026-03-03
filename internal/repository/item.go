@@ -10,7 +10,7 @@ import (
 )
 
 type IItemRepository interface {
-	GetRestaurantItems(ctx context.Context, restaurantID uuid.UUID) ([]entity.Item, error)
+	GetRestaurantItems(ctx context.Context, pagination model.Pagination, restaurantID uuid.UUID) ([]entity.Item, error)
 	CreateItem(ctx context.Context, item entity.Item) error
 	DeleteItem(ctx context.Context, id uuid.UUID) error
 	EditItem(ctx context.Context, id uuid.UUID, edit model.EditItem) error
@@ -24,8 +24,14 @@ func NewItemRepository(db *gorm.DB) *ItemRepository {
 	return &ItemRepository{db}
 }
 
-func (r *ItemRepository) GetRestaurantItems(ctx context.Context, restaurantID uuid.UUID) ([]entity.Item, error) {
-	Item, err := gorm.G[entity.Item](r.db).Where("restaurant_id = ?", restaurantID).Find(ctx)
+func (r *ItemRepository) GetRestaurantItems(ctx context.Context, pagination model.Pagination, restaurantID uuid.UUID) ([]entity.Item, error) {
+	Item, err := gorm.G[entity.Item](r.db).
+		Limit(pagination.Limit).
+		Offset(pagination.Offset()).
+		Order("created_at DESC").
+		Where("restaurant_id = ?", restaurantID).
+		Find(ctx)
+
 	if err != nil {
 		return nil, err
 	}

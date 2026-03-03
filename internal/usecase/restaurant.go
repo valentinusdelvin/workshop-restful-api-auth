@@ -12,7 +12,7 @@ import (
 
 type IRestaurantUsecase interface {
 	CreateRestaurant(ctx context.Context, createRestaurant model.CreateRestaurant) (*model.RestaurantResponse, error)
-	GetRestaurants(ctx context.Context) ([]model.RestaurantResponse, error)
+	GetRestaurants(ctx context.Context, pagination model.Pagination) ([]model.RestaurantResponse, error)
 	DeleteRestaurant(ctx context.Context, id uuid.UUID) error
 	EditRestaurant(ctx context.Context, id uuid.UUID, edit model.EditRestaurant) error
 }
@@ -42,8 +42,8 @@ func (r *RestaurantUsecase) CreateRestaurant(ctx context.Context, createRestaura
 	return &response, nil
 }
 
-func (r *RestaurantUsecase) GetRestaurants(ctx context.Context) ([]model.RestaurantResponse, error) {
-	restaurants, err := r.restaurantRepository.GetRestaurants(ctx)
+func (r *RestaurantUsecase) GetRestaurants(ctx context.Context, pagination model.Pagination) ([]model.RestaurantResponse, error) {
+	restaurants, err := r.restaurantRepository.GetRestaurants(ctx, pagination)
 	if err != nil {
 		return nil, err
 	}

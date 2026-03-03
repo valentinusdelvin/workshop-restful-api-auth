@@ -11,7 +11,7 @@ import (
 
 type IRestaurantRepository interface {
 	CreateRestaurant(ctx context.Context, restaurant entity.Restaurant) error
-	GetRestaurants(ctx context.Context) ([]entity.Restaurant, error)
+	GetRestaurants(ctx context.Context, pagination model.Pagination) ([]entity.Restaurant, error)
 	DeleteRestaurant(ctx context.Context, id uuid.UUID) error
 	EditRestaurant(ctx context.Context, id uuid.UUID, edit model.EditRestaurant) error
 }
@@ -33,8 +33,12 @@ func (r *RestaurantRepository) CreateRestaurant(ctx context.Context, restaurant 
 	return nil
 }
 
-func (r *RestaurantRepository) GetRestaurants(ctx context.Context) ([]entity.Restaurant, error) {
-	restaurants, err := gorm.G[entity.Restaurant](r.db).Find(ctx)
+func (r *RestaurantRepository) GetRestaurants(ctx context.Context, pagination model.Pagination) ([]entity.Restaurant, error) {
+	restaurants, err := gorm.G[entity.Restaurant](r.db).
+		Limit(pagination.Limit).
+		Offset(pagination.Offset()).
+		Order("created_at DESC").
+		Find(ctx)
 	if err != nil {
 		return nil, err
 	}
