@@ -7,10 +7,16 @@ import (
 func NewRouter(app *gin.Engine, v1 *V1) {
 	api := app.Group("/api/v1")
 	{
+		auth := api.Group("/auth")
+		{
+			auth.POST("/register", v1.Register)
+			auth.POST("/login", v1.Login)
+		}
+
 		restaurants := api.Group("/restaurants")
 		{
-			restaurants.GET("", v1.GetRestaurants)
-			restaurants.POST("", v1.CreateRestaurant)
+			restaurants.GET("", v1.IMiddleware.Authentication, v1.GetRestaurants)
+			restaurants.POST("", v1.IMiddleware.Authentication, v1.IMiddleware.Authorization("admin", "user"), v1.CreateRestaurant)
 			restaurants.DELETE("/:id", v1.DeleteRestaurant)
 			restaurants.PATCH("/:id", v1.EditRestaurant)
 
