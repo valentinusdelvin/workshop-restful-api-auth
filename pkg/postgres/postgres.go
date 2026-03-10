@@ -25,7 +25,7 @@ func StartPostgres() *gorm.DB {
 }
 
 func migrate(db *gorm.DB) {
-	err := db.AutoMigrate(&entity.Restaurant{}, &entity.Item{})
+	err := db.AutoMigrate(&entity.User{}, &entity.Restaurant{}, &entity.Item{})
 	if err != nil {
 		log.Fatalf("Failed to run migrations: %s", err.Error())
 	}
