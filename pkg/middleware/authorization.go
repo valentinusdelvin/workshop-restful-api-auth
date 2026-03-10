@@ -18,7 +18,7 @@ func (m *Middleware) Authorization(roles ...string) gin.HandlerFunc {
 		}
 
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-			"error": "Unauthorized",
+			"error": "Unauthorized Role",
 		})
 	}
 }
