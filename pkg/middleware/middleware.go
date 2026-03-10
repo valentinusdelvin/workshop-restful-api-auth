@@ -1,8 +1,14 @@
 package middleware
 
-import "workshop-restful-api-backend/pkg/jwt"
+import (
+	"workshop-restful-api-backend/pkg/jwt"
 
-type IMiddleware interface{}
+	"github.com/gin-gonic/gin"
+)
+
+type IMiddleware interface {
+	Authentication(c *gin.Context)
+}
 
 type Middleware struct {
 	jwt jwt.IJWT
