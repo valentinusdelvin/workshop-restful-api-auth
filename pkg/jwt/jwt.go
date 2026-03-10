@@ -10,6 +10,7 @@ import (
 
 type IJWT interface {
 	GenerateToken(userId string, role string) (string, error)
+	ValidateToken(tokenString string) (string, string, error)
 }
 
 type JWT struct {
