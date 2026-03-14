@@ -4,6 +4,8 @@ import (
 	"workshop-restful-api-backend/internal/repository"
 	"workshop-restful-api-backend/pkg/bcrypt"
 	"workshop-restful-api-backend/pkg/jwt"
+
+	"golang.org/x/oauth2"
 )
 
 type Usecase struct {
@@ -12,9 +14,9 @@ type Usecase struct {
 	ItemUsecase       IItemUsecase
 }
 
-func NewUsecase(jwt jwt.JWT, bcrypt bcrypt.IBcrypt, repository *repository.Repository) *Usecase {
+func NewUsecase(jwt jwt.JWT, bcrypt bcrypt.IBcrypt, oauth *oauth2.Config, repository *repository.Repository) *Usecase {
 	return &Usecase{
-		AuthUsecase:       NewAuthUsecase(jwt, bcrypt, repository.UserRepository),
+		AuthUsecase:       NewAuthUsecase(jwt, bcrypt, oauth, repository.UserRepository),
 		RestaurantUsecase: NewRestaurantUsecase(repository.RestaurantRepository),
 		ItemUsecase:       NewItemUsecase(repository.ItemRepository),
 	}

@@ -18,6 +18,12 @@ func (r *V1) Register(c *gin.Context) {
 		return
 	}
 
+	err = r.validator.Struct(registerRequest)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
 	ctx := c.Request.Context()
 
 	err = r.usecase.AuthUsecase.Register(ctx, registerRequest)
@@ -33,6 +39,12 @@ func (r *V1) Login(c *gin.Context) {
 	var loginRequest model.UserLogin
 
 	err := c.ShouldBindBodyWithJSON(&loginRequest)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	err = r.validator.Struct(loginRequest)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return

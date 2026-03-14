@@ -10,7 +10,10 @@ import (
 	httpserver "workshop-restful-api-backend/pkg/gin"
 	"workshop-restful-api-backend/pkg/jwt"
 	"workshop-restful-api-backend/pkg/middleware"
+	"workshop-restful-api-backend/pkg/oauth"
 	"workshop-restful-api-backend/pkg/postgres"
+
+	"github.com/go-playground/validator/v10"
 )
 
 func Run() {
@@ -19,10 +22,12 @@ func Run() {
 	jwtInit := *jwt.NewJWT()
 	bcryptInit := bcrypt.NewBcrypt()
 	middleware := middleware.NewMiddleware(&jwtInit)
+	validator := validator.New()
 
 	repo := repository.NewRepository(db)
-	uc := usecase.NewUsecase(jwtInit, bcryptInit, repo)
-	v1 := rest.NewV1(middleware, uc)
+	oauthConfig := oauth.GoogleOAuthConfig()
+	uc := usecase.NewUsecase(jwtInit, bcryptInit, &oauthConfig, repo)
+	v1 := rest.NewV1(middleware, validator, uc)
 
 	rest.NewRouter(app, v1)
 
