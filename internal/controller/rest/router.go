@@ -11,6 +11,8 @@ func NewRouter(app *gin.Engine, v1 *V1) {
 		{
 			auth.POST("/register", v1.Register)
 			auth.POST("/login", v1.Login)
+			auth.GET("/google/login", v1.LoginWithGoogle)
+			auth.GET("/google/callback", v1.HandleGoogleCallback)
 		}
 
 		restaurants := api.Group("/restaurants")
