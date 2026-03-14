@@ -1,14 +1,18 @@
 package model
 
 type UserRegister struct {
-	Username string `json:"username"`
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
 
 type UserLogin struct {
-	Username string
+	Email    string
 	Password string
+}
+
+type UserInfo struct {
+	Email string `json:"email"`
+	Name  string `json:"name"`
 }
 
 var (

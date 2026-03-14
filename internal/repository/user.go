@@ -9,7 +9,7 @@ import (
 
 type IUserRepository interface {
 	CreateUser(ctx context.Context, user entity.User) error
-	GetUserByUsername(ctx context.Context, username string) (*entity.User, error)
+	GetUserByEmail(ctx context.Context, email string) (*entity.User, error)
 }
 
 type UserRepository struct {
@@ -28,10 +28,10 @@ func (u *UserRepository) CreateUser(ctx context.Context, user entity.User) error
 	return nil
 }
 
-func (u *UserRepository) GetUserByUsername(ctx context.Context, username string) (*entity.User, error) {
+func (u *UserRepository) GetUserByEmail(ctx context.Context, email string) (*entity.User, error) {
 	var user entity.User
 	user, err := gorm.G[entity.User](u.db).
-		Where("username = ?", username).
+		Where("email = ?", email).
 		First(ctx)
 	if err != nil {
 		return nil, err
