@@ -2,6 +2,9 @@ package usecase
 
 import (
 	"context"
+	"encoding/json"
+	"errors"
+
 	"workshop-restful-api-backend/internal/entity"
 	"workshop-restful-api-backend/internal/model"
 	"workshop-restful-api-backend/internal/repository"
@@ -9,23 +12,28 @@ import (
 	"workshop-restful-api-backend/pkg/jwt"
 
 	"github.com/google/uuid"
+	"golang.org/x/oauth2"
 )
 
 type IAuthUsecase interface {
 	Register(ctx context.Context, param model.UserRegister) error
 	Login(ctx context.Context, param model.UserLogin) (string, error)
+	GenerateGoogleAuthLink(state string) string
+	HandleCallback(ctx context.Context, code string) (string, error)
 }
 
 type AuthUsecase struct {
 	Jwt            jwt.JWT
 	Bcrypt         bcrypt.IBcrypt
+	Config         *oauth2.Config
 	UserRepository repository.IUserRepository
 }
 
-func NewAuthUsecase(jwt jwt.JWT, bcrypt bcrypt.IBcrypt, userRepository repository.IUserRepository) *AuthUsecase {
+func NewAuthUsecase(jwt jwt.JWT, bcrypt bcrypt.IBcrypt, oAuth2 *oauth2.Config, userRepository repository.IUserRepository) *AuthUsecase {
 	return &AuthUsecase{
 		Jwt:            jwt,
 		Bcrypt:         bcrypt,
+		Config:         oAuth2,
 		UserRepository: userRepository,
 	}
 }
@@ -38,7 +46,6 @@ func (u *AuthUsecase) Register(ctx context.Context, param model.UserRegister) er
 	user := entity.User{
 		UserId:   uuid.New(),
 		Email:    param.Email,
-		Username: param.Username,
 		Password: hashedPassword,
 		Role:     model.UserRoleUser,
 	}
@@ -51,7 +58,7 @@ func (u *AuthUsecase) Register(ctx context.Context, param model.UserRegister) er
 }
 
 func (u *AuthUsecase) Login(ctx context.Context, param model.UserLogin) (string, error) {
-	user, err := u.UserRepository.GetUserByUsername(ctx, param.Username)
+	user, err := u.UserRepository.GetUserByEmail(ctx, param.Email)
 	if err != nil {
 		return "", err
 	}
@@ -67,4 +74,50 @@ func (u *AuthUsecase) Login(ctx context.Context, param model.UserLogin) (string,
 	}
 
 	return token, nil
+}
+
+func (u *AuthUsecase) GenerateGoogleAuthLink(state string) string {
+	return u.Config.AuthCodeURL(state)
+}
+
+func (u *AuthUsecase) HandleCallback(ctx context.Context, code string) (string, error) {
+	token, err := u.Config.Exchange(ctx, code)
+	if err != nil {
+		return "", errors.New("code exchange failed: " + err.Error())
+	}
+
+	client := u.Config.Client(ctx, token)
+	resp, err := client.Get("https://www.googleapis.com/oauth2/v2/userinfo")
+	if err != nil {
+		return "", errors.New("failed getting user info: " + err.Error())
+	}
+	defer resp.Body.Close()
+
+	var userInfo model.UserInfo
+
+	err = json.NewDecoder(resp.Body).Decode(&userInfo)
+	if err != nil {
+		return "", errors.New("failed decoding user info: " + err.Error())
+	}
+
+	user, err := u.UserRepository.GetUserByEmail(ctx, userInfo.Email)
+	if err != nil {
+		user = &entity.User{
+			UserId:   uuid.New(),
+			Email:    userInfo.Email,
+			Password: "",
+			Role:     model.UserRoleUser,
+		}
+		err = u.UserRepository.CreateUser(ctx, *user)
+		if err != nil {
+			return "", err
+		}
+	}
+
+	jwtToken, err := u.Jwt.GenerateToken(user.UserId.String(), user.Role)
+	if err != nil {
+		return "", err
+	}
+
+	return jwtToken, nil
 }
