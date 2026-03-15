@@ -8,6 +8,9 @@
 - **ORM:** GORM v1.31.1
 - **Database Driver:** gorm.io/driver/postgres v1.6.0
 - **UUID:** github.com/google/uuid v1.6.0
+- **Authentication:** github.com/golang-jwt/jwt
+- **Password Hashing:** github.com/golang/crypto/bcrypt
+- **Validation:** github.com/go-playground/validator/v10
 
 ## Overview
 
@@ -47,6 +50,8 @@ type Item struct {
 
 #### Create Restaurant (POST)
 **Endpoint:** `POST /api/v1/restaurants`
+
+**Description:** Create a new restaurant with a name and location, only user with role admin can use this endpoint.
 
 **Request:**
 ```json
@@ -103,6 +108,7 @@ type Item struct {
 - Results are ordered by `created_at DESC` (newest first)
 - Omitting `page` and `limit` will use defaults
 - Invalid page/limit values will return 400 Bad Request
+- Only Authenticated users can access this endpoint resource
 
 ---
 
